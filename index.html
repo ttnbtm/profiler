@@ -40,16 +40,17 @@
       document.getElementById("user-email").textContent = userEmail;
 
       fetch(`${APPS_SCRIPT_URL}?token=${encodeURIComponent(idToken)}`)
-        .then(res => {
-          if (!res.ok) throw new Error("Access denied or error in Apps Script");
-          return res.json();
-        })
-        .then(data => {
-          showProfiles(data, userEmail);
-        })
-        .catch(err => {
-          document.getElementById("auth-error").textContent = err.message;
-        });
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          document.getElementById("auth-error").textContent = data.error;
+        } else {
+          showProfiles(data.profiles, data.email);
+        }
+      })
+      .catch(err => {
+        document.getElementById("auth-error").textContent = "Unexpected error: " + err.message;
+      });
     }
 
     function showProfiles(data, email) {

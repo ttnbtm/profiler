@@ -94,6 +94,8 @@
     }
 
     function renderTable() {
+      const spinner = document.getElementById("spinner");
+      spinner.style.display = "flex";
       const tableContainer = document.getElementById("profile-table");
       const table = document.createElement("table");
       console.log('profileData', profileData);
@@ -123,6 +125,8 @@
           if (!editing) navigator.clipboard.writeText(cell.textContent);
         };
       });
+
+      spinner.style.display = "none";
     }
 
     function startEditing() {

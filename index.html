@@ -83,6 +83,7 @@
             document.getElementById("auth-error").textContent = data.error;
           } else {
             profileData = data.profiles;
+            console.log(profileData);
             document.getElementById("signin-container").classList.add("hidden");
             document.getElementById("user-section").classList.remove("hidden");
             renderTable();

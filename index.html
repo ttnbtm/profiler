@@ -97,7 +97,6 @@
     function renderTable() {
       const tableContainer = document.getElementById("profile-table");
       const table = document.createElement("table");
-            console.log('table', table);
       table.innerHTML = `
         <thead>
           <tr>${HEADERS.map(h => `<th>${h}</th>`).join('')}</tr>
@@ -115,6 +114,7 @@
           `).join('')}
         </tbody>
       `;
+      console.log('table', table);
       tableContainer.innerHTML = "";
       tableContainer.appendChild(table);
 

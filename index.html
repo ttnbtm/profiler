@@ -47,7 +47,7 @@
 
   <script>
     const CLIENT_ID = '639261615144-evevtrl8oa7go9ttt1fa55l2sc95iudh.apps.googleusercontent.com';
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw2R2ZDJbF8PGMCTSDn6tEZMS_s7TKKX3j1jyv7lSTRD5UWGt42RemVBHczqznLlK8B1A/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxkVWr0oxwxdNiJZyljJ1VA_9gWXU4IgxaWscGlAGNJ-Nrbb97WWGb2JS-RbCxknSLQBw/exec';
 
     let profileData = [];
     let editing = false;
@@ -156,8 +156,10 @@
 
       fetch(APPS_SCRIPT_URL, {
         method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: currentIdToken, data: updated })
+        body: new URLSearchParams({
+          token: currentIdToken,
+          data: JSON.stringify(updated)
+        })
       })
       .then(res => res.text())
       .then(() => {

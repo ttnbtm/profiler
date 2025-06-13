@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>BTM Profiler</title>
+  <title>User Profile Editor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -10,78 +10,50 @@
     body { font-family: Arial, sans-serif; padding: 20px; }
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    #signin-container { margin-bottom: 20px; }
+    td input { width: 100%; box-sizing: border-box; }
+    .controls button { margin-right: 10px; }
+    #spinner {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(255, 255, 255, 0.7);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+    }
     .hidden { display: none; }
-    .error { color: red; margin-top: 10px; }
+    td.copyable:hover { background-color: #eef; cursor: pointer; }
   </style>
 </head>
 <body>
-  <h1>User Profiles UI</h1>
+  <h1>User Profile Editor</h1>
 
   <div id="signin-container">
     <div id="g_id_signin"></div>
-    <div class="error" id="auth-error"></div>
+    <div class="error" id="auth-error" style="color:red; margin-top:10px;"></div>
   </div>
 
   <div id="user-section" class="hidden">
     <p><strong>Signed in as:</strong> <span id="user-email"></span></p>
-    <div id="profile-table">Loading...</div>
+    <div class="controls">
+      <button id="editBtn" onclick="startEditing()">Edit</button>
+      <button id="saveBtn" class="hidden" onclick="saveChanges()">Save</button>
+      <button id="cancelBtn" class="hidden" onclick="cancelChanges()">Cancel</button>
+    </div>
+    <div id="spinner">Saving...</div>
+    <div id="profile-table"></div>
   </div>
 
   <script>
     const CLIENT_ID = '639261615144-evevtrl8oa7go9ttt1fa55l2sc95iudh.apps.googleusercontent.com';
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGQYEvz2wbkOirf7SLNybx-P6Rd343KPGjc3IxT_OhUzDPQ5ufOehyCVmXHkL0or6png/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw74wdV4XJHJdQcABUUfFWeYMwPkKMwaI4rj0eOWhCkQ_8p7KG9b4xoyI86aBBsQ0pI6g/exec';
 
-    function handleCredentialResponse(response) {
-      const idToken = response.credential;
-      const jwtPayload = JSON.parse(atob(idToken.split('.')[1]));
-      const userEmail = jwtPayload.email;
-
-      document.getElementById("user-email").textContent = userEmail;
-
-      fetch(`${APPS_SCRIPT_URL}?token=${encodeURIComponent(idToken)}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) {
-          document.getElementById("auth-error").textContent = data.error;
-        } else {
-          showProfiles(data.profiles, data.email);
-        }
-      })
-      .catch(err => {
-        document.getElementById("auth-error").textContent = "Unexpected error: " + err.message;
-      });
-    }
-
-    function showProfiles(data, email) {
-      document.getElementById("signin-container").classList.add("hidden");
-      document.getElementById("user-section").classList.remove("hidden");
-
-      const table = document.createElement("table");
-      const thead = document.createElement("thead");
-      thead.innerHTML = `
-        <tr>
-          <th>Name</th><th>Passport</th><th>ITN</th>
-          <th>Phone</th><th>Email</th><th>Loyalty Card 1</th><th>Loyalty Card 2</th>
-        </tr>`;
-      table.appendChild(thead);
-
-      const tbody = document.createElement("tbody");
-      data.forEach(row => {
-        const tr = document.createElement("tr");
-        row.forEach(cell => {
-          const td = document.createElement("td");
-          td.textContent = cell;
-          tr.appendChild(td);
-        });
-        tbody.appendChild(tr);
-      });
-      table.appendChild(tbody);
-
-      const container = document.getElementById("profile-table");
-      container.innerHTML = '';
-      container.appendChild(table);
-    }
+    let profileData = [];
+    let editing = false;
+    let currentIdToken = null;
 
     window.onload = function () {
       google.accounts.id.initialize({
@@ -89,12 +61,118 @@
         callback: handleCredentialResponse,
         use_fedcm_for_prompt: false
       });
-
       google.accounts.id.renderButton(
         document.getElementById("g_id_signin"),
         { theme: "outline", size: "large" }
       );
     };
+
+    function handleCredentialResponse(response) {
+      currentIdToken = response.credential;
+      const payload = JSON.parse(atob(currentIdToken.split('.')[1]));
+      const userEmail = payload.email;
+      document.getElementById("user-email").textContent = userEmail;
+
+      fetch(`${APPS_SCRIPT_URL}?token=${encodeURIComponent(currentIdToken)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById("auth-error").textContent = data.error;
+          } else {
+            profileData = data.profiles;
+            document.getElementById("signin-container").classList.add("hidden");
+            document.getElementById("user-section").classList.remove("hidden");
+            renderTable();
+          }
+        })
+        .catch(err => {
+          document.getElementById("auth-error").textContent = "Error: " + err.message;
+        });
+    }
+
+    function renderTable() {
+      const tableContainer = document.getElementById("profile-table");
+      const table = document.createElement("table");
+      table.innerHTML = `
+        <thead>
+          <tr><th>Name</th><th>Passport</th><th>ITN</th><th>Phone</th><th>Email</th><th>Loyalty Card 1</th><th>Loyalty Card 2</th></tr>
+        </thead>
+        <tbody>
+          ${profileData.map((row, i) => `
+            <tr data-index="${i}">
+              ${row.map((cell, j) => `
+                <td class="copyable">${cell}</td>
+              `).join('')}
+            </tr>
+          `).join('')}
+        </tbody>
+      `;
+      tableContainer.innerHTML = "";
+      tableContainer.appendChild(table);
+
+      document.querySelectorAll("td.copyable").forEach(cell => {
+        cell.onclick = () => {
+          if (!editing) navigator.clipboard.writeText(cell.textContent);
+        };
+      });
+    }
+
+    function startEditing() {
+      editing = true;
+      document.getElementById("editBtn").classList.add("hidden");
+      document.getElementById("saveBtn").classList.remove("hidden");
+      document.getElementById("cancelBtn").classList.remove("hidden");
+
+      document.querySelectorAll("#profile-table tbody tr").forEach(row => {
+        row.querySelectorAll("td").forEach(cell => {
+          const val = cell.textContent;
+          cell.innerHTML = `<input type="text" value="${val}">`;
+          cell.querySelector("input").addEventListener("keydown", e => {
+            if (e.key === "Enter") saveChanges();
+          });
+        });
+      });
+    }
+
+    function cancelChanges() {
+      editing = false;
+      document.getElementById("editBtn").classList.remove("hidden");
+      document.getElementById("saveBtn").classList.add("hidden");
+      document.getElementById("cancelBtn").classList.add("hidden");
+      renderTable();
+    }
+
+    function saveChanges() {
+      const spinner = document.getElementById("spinner");
+      spinner.style.display = "flex";
+
+      const updated = [];
+      document.querySelectorAll("#profile-table tbody tr").forEach(row => {
+        const rowData = [];
+        row.querySelectorAll("td").forEach(cell => {
+          const input = cell.querySelector("input");
+          rowData.push(input ? input.value : cell.textContent);
+        });
+        updated.push(rowData);
+      });
+
+      fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: currentIdToken, data: updated })
+      })
+      .then(res => res.text())
+      .then(() => {
+        profileData = updated;
+        editing = false;
+        spinner.style.display = "none";
+        cancelChanges();
+      })
+      .catch(err => {
+        alert("Save failed: " + err.message);
+        spinner.style.display = "none";
+      });
+    }
   </script>
 </body>
 </html>

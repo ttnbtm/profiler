@@ -106,7 +106,7 @@
             <tr data-index="${i}">
               ${row.map((cell, j) => {
                 if (HEADERS[j] === 'Loyalty cards') {
-                  cell = (cell || '').split(/\r?\n/).join('<br>');
+                  cell = String(cell || '').split('\n').join('<br>');
                 }
                 return `<td class="copyable">${cell || ''}</td>`;
               }).join('')}

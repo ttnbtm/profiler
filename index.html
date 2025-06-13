@@ -75,7 +75,6 @@
       const payload = JSON.parse(atob(currentIdToken.split('.')[1]));
       const userEmail = payload.email;
       document.getElementById("user-email").textContent = userEmail;
-      const spinner = document.getElementById("spinner");
 
       fetch(`${APPS_SCRIPT_URL}?token=${encodeURIComponent(currentIdToken)}`)
         .then(res => res.json())
@@ -87,9 +86,7 @@
             console.log(profileData);
             document.getElementById("signin-container").classList.add("hidden");
             document.getElementById("user-section").classList.remove("hidden");
-            spinner.style.display = "flex";
             renderTable();
-            spinner.style.display = "none";
           }
         })
         .catch(err => {
@@ -98,6 +95,8 @@
     }
 
     function renderTable() {
+      const spinner = document.getElementById("spinner");
+      spinner.style.display = "flex";
       const tableContainer = document.getElementById("profile-table");
       const table = document.createElement("table");
       table.innerHTML = `
@@ -125,6 +124,8 @@
           if (!editing) navigator.clipboard.writeText(cell.textContent);
         };
       });
+
+      spinner.style.display = "none";
     }
 
     function startEditing() {

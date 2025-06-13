@@ -41,10 +41,11 @@
       <button id="saveBtn" class="hidden" onclick="saveChanges()">Save</button>
       <button id="cancelBtn" class="hidden" onclick="cancelChanges()">Cancel</button>
     </div>
-    <div id="spinner">Wait...</div>
     <div id="profile-table"></div>
   </div>
 
+  <div id="spinner">Wait...</div>
+  
   <script>
     const CLIENT_ID = '639261615144-evevtrl8oa7go9ttt1fa55l2sc95iudh.apps.googleusercontent.com';
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdqEuIR4MRlYcbxv7pNaPJlneqxsMVAcWtRSoIsBxpNUjLkx29griNNWta0ZODVW5IjA/exec';
@@ -57,6 +58,7 @@
     let profileData = [];
     let editing = false;
     let currentIdToken = null;
+    const spinner = document.getElementById("spinner");
 
     window.onload = function () {
       google.accounts.id.initialize({
@@ -76,6 +78,7 @@
       const userEmail = payload.email;
       document.getElementById("user-email").textContent = userEmail;
 
+      spinner.style.display = "flex";
       fetch(`${APPS_SCRIPT_URL}?token=${encodeURIComponent(currentIdToken)}`)
         .then(res => res.json())
         .then(data => {
@@ -91,11 +94,10 @@
         .catch(err => {
           document.getElementById("auth-error").textContent = "Error: " + err.message;
         });
+        spinner.style.display = "none";
     }
 
     function renderTable() {
-      const spinner = document.getElementById("spinner");
-      spinner.style.display = "flex";
       const tableContainer = document.getElementById("profile-table");
       const table = document.createElement("table");
       console.log('profileData', profileData);
@@ -125,8 +127,6 @@
           if (!editing) navigator.clipboard.writeText(cell.textContent);
         };
       });
-
-      spinner.style.display = "none";
     }
 
     function startEditing() {

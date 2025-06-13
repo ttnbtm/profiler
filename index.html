@@ -27,7 +27,7 @@
   </style>
 </head>
 <body>
-  <h1>User Profile Editor</h1>
+  <h1>Profiler</h1>
 
   <div id="signin-container">
     <div id="g_id_signin"></div>
@@ -41,7 +41,7 @@
       <button id="saveBtn" class="hidden" onclick="saveChanges()">Save</button>
       <button id="cancelBtn" class="hidden" onclick="cancelChanges()">Cancel</button>
     </div>
-    <div id="spinner">Saving...</div>
+    <div id="spinner">Wait...</div>
     <div id="profile-table"></div>
   </div>
 
@@ -95,6 +95,8 @@
     }
 
     function renderTable() {
+      const spinner = document.getElementById("spinner");
+      spinner.style.display = "flex";
       const tableContainer = document.getElementById("profile-table");
       const table = document.createElement("table");
       table.innerHTML = `
@@ -116,6 +118,7 @@
       `;
       tableContainer.innerHTML = "";
       tableContainer.appendChild(table);
+      spinner.style.display = "none";
 
       document.querySelectorAll("td.copyable").forEach(cell => {
         cell.onclick = () => {

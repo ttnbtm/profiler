@@ -101,18 +101,7 @@
         <thead>
           <tr>${HEADERS.map(h => `<th>${h}</th>`).join('')}</tr>
         </thead>
-        <tbody>
-          ${profileData.map((row, i) => `
-            <tr data-index="${i}">
-              ${row.map((cell, j) => {
-                if (HEADERS[j] === 'Loyalty cards') {
-                  cell = (cell || '').split('\n').join('<br>');
-                }
-                return `<td class="copyable">${cell || ''}</td>`;
-              }).join('')}
-            </tr>
-          `).join('')}
-        </tbody>
+
       `;
       console.log('table', table);
       tableContainer.innerHTML = "";

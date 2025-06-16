@@ -35,7 +35,7 @@
   </div>
 
   <div id="user-section" class="hidden">
-    <p><strong>Signed in as:</strong> <span id="user-email"></span></p>
+    <p><strong>Signed in as:</strong> <span id="user-email"></span> <button id="signOutBtn" onclick="signOut()">Sign Out</button></p>
     <div class="controls">
       <button id="editBtn" onclick="startEditing()">Edit</button>
       <button id="saveBtn" class="hidden" onclick="saveChanges()">Save</button>
@@ -64,6 +64,7 @@
       google.accounts.id.initialize({
         client_id: CLIENT_ID,
         callback: handleCredentialResponse,
+        auto_select: true,
         use_fedcm_for_prompt: false
       });
       google.accounts.id.renderButton(
@@ -72,6 +73,11 @@
       );
     };
 
+    function signOut() {
+      google.accounts.id.disableAutoSelect();
+      location.reload();
+    }
+    
     function handleCredentialResponse(response) {
       currentIdToken = response.credential;
       const payload = JSON.parse(atob(currentIdToken.split('.')[1]));

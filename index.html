@@ -61,9 +61,16 @@
     const spinner = document.getElementById("spinner");
 
     window.onload = function () {
+      const cachedToken = localStorage.getItem('idToken');
+      if (cachedToken) {
+        handleCredentialResponse({ credential: cachedToken });
+      }
       google.accounts.id.initialize({
         client_id: CLIENT_ID,
-        callback: handleCredentialResponse,
+        callback: (res) => {
+          localStorage.setItem('idToken', res.credential);
+          handleCredentialResponse(res);
+        },
         auto_select: true,
         use_fedcm_for_prompt: false
       });
@@ -76,6 +83,7 @@
 
     function signOut() {
       google.accounts.id.disableAutoSelect();
+      localStorage.removeItem('idToken');
       location.reload();
     }
     

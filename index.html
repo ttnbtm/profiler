@@ -175,10 +175,11 @@
       document.getElementById("saveBtn").classList.remove("hidden");
       document.getElementById("cancelBtn").classList.remove("hidden");
 
-      document.querySelectorAll("#profile-table tbody tr").forEach((row, rowIndex) => {
+      document.querySelectorAll("#profile-table tbody tr").forEach((row, displayIndex) => {
+        const realIndex = visibleIndexes[displayIndex];
         row.querySelectorAll("td").forEach((cell, colIndex) => {
           const field = HEADERS[colIndex];
-          const val = profileData[rowIndex][colIndex] || '';
+          const val = profileData[realIndex][colIndex] || '';
           let input;
           if (field === 'Sex') {
             input = `<select>

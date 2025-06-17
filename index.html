@@ -98,7 +98,12 @@
         .then(res => res.json())
         .then(data => {
           if (data.error) {
-            document.getElementById("auth-error").textContent = data.error;
+            console.warn("Token invalid, clearing session.");
+            localStorage.removeItem('idToken');
+            // document.getElementById("auth-error").textContent = "";
+            document.getElementById("signin-container").classList.remove("hidden");
+            document.getElementById("user-section").classList.add("hidden");
+            document.getElementById("auth-error").textContent = "Please sign-in again. "// data.error;
           } else {
             profileData = data.profiles;
             document.getElementById("signin-container").classList.add("hidden");
@@ -108,7 +113,12 @@
           spinner.style.display = "none";
         })
         .catch(err => {
-          document.getElementById("auth-error").textContent = "Error: " + err.message;
+          console.warn("Token fetch failed:", err);
+          localStorage.removeItem('idToken');
+          // document.getElementById("auth-error").textContent = "";
+          document.getElementById("signin-container").classList.remove("hidden");
+          document.getElementById("user-section").classList.add("hidden");
+          document.getElementById("auth-error").textContent = "Please sign-in again."; // "Error: " + err.message;
           spinner.style.display = "none";
         });
     }

@@ -37,7 +37,7 @@
   <div id="user-section" class="hidden">
     <p><strong>Signed in as:</strong> <span id="user-email"></span> <button id="signOutBtn" onclick="signOut()">Sign Out</button></p>
     <div class="controls">
-      <input type="text" id="searchBox" placeholder="Search by company, name, or email">
+      <input type="text" id="searchBox" placeholder="Search by company, name, or email"  style="width: 60%; max-width: 400px; margin-bottom: 10px;"><br>
       <button id="editBtn" onclick="startEditing()">Edit</button>
       <button id="saveBtn" class="hidden" onclick="saveChanges()">Save</button>
       <button id="cancelBtn" class="hidden" onclick="cancelChanges()">Cancel</button>
@@ -57,6 +57,7 @@
     ];
 
     let profileData = [];
+    let visibleIndexes = [];
     let editing = false;
     let currentIdToken = null;
     const spinner = document.getElementById("spinner");
@@ -125,9 +126,14 @@
 
     function renderTable() {
       const filter = document.getElementById("searchBox")?.value?.toLowerCase() || "";
-      const filtered = profileData.filter(row =>
-        [0,1,2,3,4,13].some(i => (row[i] || '').toLowerCase().includes(filter))
-      );
+      visibleIndexes = [];
+      const filtered = [];
+      profileData.forEach((row, i) => {
+        if ([0,1,2,3,4,13].some(j => (row[j] || '').toLowerCase().includes(filter))) {
+          visibleIndexes.push(i);
+          filtered.push(row);
+        }
+      });
       
       const tableContainer = document.getElementById("profile-table");
       const table = document.createElement("table");
@@ -205,30 +211,29 @@
       // const spinner = document.getElementById("spinner");
       spinner.style.display = "flex";
 
-      const updated = [];
-      document.querySelectorAll("#profile-table tbody tr").forEach(row => {
+      document.querySelectorAll("#profile-table tbody tr").forEach((row, i) => {
         const rowData = [];
         row.querySelectorAll("td").forEach((cell, colIndex) => {
           const el = cell.querySelector("input, select, textarea");
           let val = el ? el.value : '';
           if (HEADERS[colIndex] === 'Loyalty cards') {
-            val = val.split('\n').map(s => s.trim()).filter(Boolean).join("\n");
+            val = val.split('\n').map(s => s.trim()).filter(Boolean).join('\n');
           }
           rowData.push(val);
         });
-        updated.push(rowData);
+        profileData[visibleIndexes[i]] = rowData;
       });
 
       fetch(APPS_SCRIPT_URL, {
         method: "POST",
         body: new URLSearchParams({
           token: currentIdToken,
-          data: JSON.stringify(updated)
+          data: JSON.stringify(profileData)
         })
       })
       .then(res => res.text())
       .then(() => {
-        profileData = updated;
+        // profileData = updated;
         editing = false;
         spinner.style.display = "none";
         cancelChanges();

@@ -37,6 +37,7 @@
   <div id="user-section" class="hidden">
     <p><strong>Signed in as:</strong> <span id="user-email"></span> <button id="signOutBtn" onclick="signOut()">Sign Out</button></p>
     <div class="controls">
+      <input type="text" id="searchBox" placeholder="Search by company, name, or email">
       <button id="editBtn" onclick="startEditing()">Edit</button>
       <button id="saveBtn" class="hidden" onclick="saveChanges()">Save</button>
       <button id="cancelBtn" class="hidden" onclick="cancelChanges()">Cancel</button>
@@ -113,6 +114,11 @@
     }
 
     function renderTable() {
+      const filter = document.getElementById("searchBox")?.value?.toLowerCase() || "";
+      const filtered = profileData.filter(row =>
+        [0,1,2,3,4,13].some(i => (row[i] || '').toLowerCase().includes(filter))
+      );
+      
       const tableContainer = document.getElementById("profile-table");
       const table = document.createElement("table");
       console.log('profileData', profileData);
@@ -121,7 +127,7 @@
           <tr>${HEADERS.map(h => `<th>${h}</th>`).join('')}</tr>
         </thead>
         <tbody>
-          ${profileData.map((row, i) => `
+          ${filtered.map((row, i) => `
             <tr data-index="${i}">
               ${row.map((cell, j) => {
                 if (HEADERS[j] === 'Loyalty cards') {
@@ -133,7 +139,6 @@
           `).join('')}
         </tbody>
       `;
-      console.log('table', table);
       tableContainer.innerHTML = "";
       tableContainer.appendChild(table);
 
@@ -144,6 +149,10 @@
       });
     }
 
+    document.addEventListener("input", e => {
+      if (e.target.id === "searchBox" && !editing) renderTable();
+    });
+    
     function startEditing() {
       editing = true;
       document.getElementById("editBtn").classList.add("hidden");

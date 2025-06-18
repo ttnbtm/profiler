@@ -207,8 +207,8 @@
 
         row.querySelectorAll("td").forEach((cell, colIndex) => {
           if (colIndex === 0) return;
-          const field = HEADERS[colIndex];
-          const val = profileData[realIndex][colIndex] || '';
+          const field = HEADERS[colIndex - 1];
+          const val = profileData[realIndex][colIndex - 1] || '';
           let input;
           if (field === 'Sex') {
             input = `<select>

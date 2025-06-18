@@ -217,7 +217,7 @@
         if (el) el.addEventListener("keydown", e => { if (e.key === "Enter") saveChanges(); });
         newRow.appendChild(cell);
       });
-      tbody.appendChild(newRow);
+      tbody.insertBefore(newRow, tbody.firstChild);
     }
 
     function cancelChanges() {

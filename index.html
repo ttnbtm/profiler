@@ -5,10 +5,11 @@
   <title>User Profile Editor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; font-size: 1em; padding: 20px; }
+    body { font-family: 'Roboto', sans-serif; font-size: 1em; padding: 20px; }
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: .9em; }
+    th, td { border: 1px solid #ccc; padding: 4px; text-align: left; font-size: .9em; }
     td input { width: 100%; box-sizing: border-box; }
     .controls button { margin: 10px 0; }
     #spinner {
@@ -40,6 +41,12 @@
       <button id="editBtn" onclick="startEditing()">Edit</button>
       <button id="saveBtn" class="hidden" onclick="saveChanges()">Save</button>
       <button id="cancelBtn" class="hidden" onclick="cancelChanges()">Cancel</button>
+    </div>
+    <div id="deleteSection" class="hidden">
+      <button onclick="deleteSelected()">Delete</button>
+    </div>
+    <div id="deleteNotice" class="hidden" style="color: darkred; font-weight: bold; margin-top: 10px;">
+      Press Save to keep changes or Cancel to revert.
     </div>
     <div id="profile-table"></div>
   </div>
@@ -139,14 +146,18 @@
       console.log('profileData', profileData);
       table.innerHTML = `
         <thead>
-          <tr>${HEADERS.map(h => `<th>${h}</th>`).join('')}</tr>
+          <tr>
+            ${editing ? '<th><input type="checkbox" id="masterCheckbox"></th>' : ''}
+            ${HEADERS.map(h => `<th>${h}</th>`).join('')}
+          </tr>
         </thead>
         <tbody>
           ${filtered.map((row, i) => `
-            <tr data-index="${i}">
+            <tr data-index="${i}" style="">
+              ${editing ? '<td><input type="checkbox" class="rowCheckbox"></td>' : ''}
               ${row.map((cell, j) => {
                 if (HEADERS[j] === 'Loyalty cards') {
-                  cell = String(cell || '').split('\n').join('<br>');
+                  cell = String(cell || '').split(/\r?\n/).join('<br>');
                 }
                 return `<td class="copyable">${cell || ''}</td>`;
               }).join('')}
@@ -169,12 +180,28 @@
           });
         };
       });
+
+      if (editing) {
+        document.getElementById('masterCheckbox').addEventListener('change', function () {
+          document.querySelectorAll('.rowCheckbox').forEach(cb => cb.checked = this.checked);
+          updateDeleteVisibility();
+        });
+      
+        document.querySelectorAll('.rowCheckbox').forEach(cb => {
+          cb.addEventListener('change', updateDeleteVisibility);
+        });
+      }
+    }
+    
+    function updateDeleteVisibility() {
+      const anyChecked = [...document.querySelectorAll('.rowCheckbox')].some(cb => cb.checked);
+      document.getElementById("deleteSection").classList.toggle("hidden", !anyChecked);
     }
 
     document.addEventListener("input", e => {
       if (e.target.id === "searchBox" && !editing) renderTable();
     });
-    
+
     function startEditing() {
       editing = true;
       document.getElementById("editBtn").classList.add("hidden");
@@ -235,10 +262,21 @@
       document.getElementById("editBtn").classList.remove("hidden");
       document.getElementById("saveBtn").classList.add("hidden");
       document.getElementById("cancelBtn").classList.add("hidden");
+      document.getElementById("deleteSection").classList.add("hidden");
+      document.getElementById("deleteNotice").classList.add("hidden");
       renderTable();
       spinner.style.display = "none";
     }
 
+    function deleteSelected() {
+      document.querySelectorAll("#profile-table tbody tr").forEach((row, i) => {
+        const cb = row.querySelector(".rowCheckbox");
+        if (cb?.checked) row.style.display = "none"; // hide visually
+      });
+      document.getElementById("deleteSection").classList.add("hidden");
+      document.getElementById("deleteNotice").classList.remove("hidden");
+    }
+    
     function saveChanges() {
       // const spinner = document.getElementById("spinner");
       spinner.style.display = "flex";
@@ -247,6 +285,7 @@
       const rows = document.querySelectorAll("#profile-table tbody tr")
 
       rows.forEach((row, i) => {
+        if (row.style.display === 'none') return;
         const rowData = [];
         row.querySelectorAll("td").forEach((cell, colIndex) => {
           const el = cell.querySelector("input, select, textarea");

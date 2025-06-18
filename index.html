@@ -145,7 +145,6 @@
       
       const tableContainer = document.getElementById("profile-table");
       const table = document.createElement("table");
-      console.log('profileData', profileData);
       table.innerHTML = `
         <thead>
           <tr>
@@ -318,6 +317,7 @@
       });
 
       profileData = updated;
+      console.log('profileData', profileData);
       
       fetch(APPS_SCRIPT_URL, {
         method: "POST",

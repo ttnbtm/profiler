@@ -256,7 +256,7 @@
           }
           rowData.push(val);
         });
-
+        console.log(visibleIndexes);
         if (i < visibleIndexes.length) {
           updated[visibleIndexes[i]] = rowData;
         } else if (rowData.some(val => val.trim() !== '')) {

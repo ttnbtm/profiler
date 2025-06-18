@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -38,7 +38,7 @@
 
   <div id="user-section" class="hidden">
     <p><strong>Signed in as:</strong> <span id="user-email"></span> <button id="signOutBtn" onclick="signOut()">Sign Out</button></p>
-    <div class="controls">
+    <div class="controls">                                                                                                                                                                                                  
       <input type="text" id="searchBox" placeholder="Search by company, name, or email"  style="width: 60%; max-width: 400px; margin-bottom: 10px;"><br>
       <button id="editBtn" onclick="startEditing()">Edit</button>
       <button id="saveBtn" class="hidden" onclick="saveChanges()">Save</button>
@@ -300,7 +300,7 @@
         row.querySelectorAll("td").forEach((cell, colIndex) => {
           const el = cell.querySelector("input, select, textarea");
           let val = el ? el.value : '';
-          if (HEADERS[colIndex] === 'Loyalty cards') {
+          if (HEADERS[colIndex-1] === 'Loyalty cards') {
             val = val.split('\n').map(s => s.trim()).filter(Boolean).join('\n');
           }
           if (colIndex > 0 || !editing) rowData.push(val);
@@ -311,6 +311,7 @@
             updated.push(rowData);
           }
         } else {
+          console.log('rowData', rowData);
           const realIndex = visibleIndexes[i - 1];
           updated[realIndex] = rowData;
         }

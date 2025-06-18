@@ -208,6 +208,8 @@
       document.getElementById("saveBtn").classList.remove("hidden");
       document.getElementById("cancelBtn").classList.remove("hidden");
 
+      renderTable();
+      
       const tbody = document.querySelector("#profile-table tbody");
 
       document.querySelectorAll("#profile-table tbody tr").forEach((row, displayIndex) => {

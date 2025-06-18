@@ -147,14 +147,14 @@
       table.innerHTML = `
         <thead>
           <tr>
-            ${editing ? '<th><input type="checkbox" id="masterCheckbox"></th>' : ''}
+            // ${editing ? '<th><input type="checkbox" id="masterCheckbox"></th>' : ''}
             ${HEADERS.map(h => `<th>${h}</th>`).join('')}
           </tr>
         </thead>
         <tbody>
           ${filtered.map((row, i) => `
             <tr data-index="${i}" style="">
-              ${editing ? '<td><input type="checkbox" class="rowCheckbox"></td>' : ''}
+              // ${editing ? '<td><input type="checkbox" class="rowCheckbox"></td>' : ''}
               ${row.map((cell, j) => {
                 if (HEADERS[j] === 'Loyalty cards') {
                   cell = String(cell || '').split(/\r?\n/).join('<br>');
@@ -208,8 +208,25 @@
       document.getElementById("saveBtn").classList.remove("hidden");
       document.getElementById("cancelBtn").classList.remove("hidden");
 
-      renderTable();
+      const headerRow = document.querySelector("#profile-table thead tr");
+      const masterTh = document.createElement("th");
+      masterTh.innerHTML = '<input type="checkbox" id="masterCheckbox">';
+      headerRow.insertBefore(masterTh, headerRow.firstChild);
       
+      document.querySelectorAll("#profile-table tbody tr").forEach(row => {
+        const cbCell = document.createElement("td");
+        cbCell.innerHTML = '<input type="checkbox" class="rowCheckbox">';
+        row.insertBefore(cbCell, row.firstChild);
+      });
+
+      document.getElementById("masterCheckbox").addEventListener("change", function () {
+        document.querySelectorAll(".rowCheckbox").forEach(cb => cb.checked = this.checked);
+        updateDeleteVisibility();
+      });
+      document.querySelectorAll(".rowCheckbox").forEach(cb =>
+        cb.addEventListener("change", updateDeleteVisibility)
+      );
+
       const tbody = document.querySelector("#profile-table tbody");
 
       document.querySelectorAll("#profile-table tbody tr").forEach((row, displayIndex) => {

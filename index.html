@@ -147,14 +147,12 @@
       table.innerHTML = `
         <thead>
           <tr>
-            // ${editing ? '<th><input type="checkbox" id="masterCheckbox"></th>' : ''}
             ${HEADERS.map(h => `<th>${h}</th>`).join('')}
           </tr>
         </thead>
         <tbody>
           ${filtered.map((row, i) => `
             <tr data-index="${i}" style="">
-              // ${editing ? '<td><input type="checkbox" class="rowCheckbox"></td>' : ''}
               ${row.map((cell, j) => {
                 if (HEADERS[j] === 'Loyalty cards') {
                   cell = String(cell || '').split(/\r?\n/).join('<br>');

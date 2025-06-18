@@ -290,31 +290,49 @@
       // const spinner = document.getElementById("spinner");
       spinner.style.display = "flex";
 
-      const updated = [];
-      const rows = document.querySelectorAll("#profile-table tbody tr")
-
+      const updatedProfileData = [...profileData]; // start with full dataset
+      
+      const rows = document.querySelectorAll("#profile-table tbody tr");
+      const newDataRows = [];
+      
       rows.forEach((row, i) => {
-        if (row.style.display === 'none') return;
+        if (row.style.display === "none") return; // skip deleted rows
+      
         const rowData = [];
         row.querySelectorAll("td").forEach((cell, colIndex) => {
           const el = cell.querySelector("input, select, textarea");
           let val = el ? el.value : '';
-          if (HEADERS[colIndex-1] === 'Loyalty cards') {
+          if (HEADERS[colIndex - 1] === 'Loyalty cards') {
             val = val.split('\n').map(s => s.trim()).filter(Boolean).join('\n');
           }
-          if (colIndex > 0) rowData.push(val);
+          if (colIndex > 0) rowData.push(val); // skip checkbox col
         });
-        console.log(i, visibleIndexes);
+      
         if (i === 0) {
+          // First row is "new record"
           if (rowData.some(val => val.trim() !== '')) {
-            updated.push(rowData);
+            newDataRows.push(rowData);
           }
         } else {
-          updated.push(rowData);
+          const realIndex = visibleIndexes[i - 1];
+          updatedProfileData[realIndex] = rowData;
         }
       });
-
-      profileData = updated;
+      
+      // Remove rows from profileData where row.style.display === 'none'
+      const deletedIndexes = [];
+      rows.forEach((row, i) => {
+        const cb = row.querySelector('.rowCheckbox');
+        if (cb?.checked && row.style.display === 'none' && i > 0) {
+          deletedIndexes.push(visibleIndexes[i - 1]);
+        }
+      });
+      
+      deletedIndexes.sort((a, b) => b - a).forEach(idx => {
+        updatedProfileData.splice(idx, 1);
+      });
+      
+      profileData = [...updatedProfileData, ...newDataRows];
       console.log('profileData', profileData);
       
       fetch(APPS_SCRIPT_URL, {

@@ -215,6 +215,7 @@
       document.querySelectorAll("#profile-table tbody tr").forEach((row, displayIndex) => {
         const realIndex = visibleIndexes[displayIndex];
         row.querySelectorAll("td").forEach((cell, colIndex) => {
+          if (colIndex === 0) return;
           const field = HEADERS[colIndex];
           const val = profileData[realIndex][colIndex] || '';
           let input;

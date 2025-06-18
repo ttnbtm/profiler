@@ -10,7 +10,7 @@
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     td input { width: 100%; box-sizing: border-box; }
-    .controls button { margin: 10px; }
+    .controls button { margin: 10px 0; }
     #spinner {
       display: none;
       position: fixed;
@@ -180,6 +180,8 @@
       document.getElementById("editBtn").classList.add("hidden");
       document.getElementById("saveBtn").classList.remove("hidden");
       document.getElementById("cancelBtn").classList.remove("hidden");
+
+      const tbody = document.querySelector("#profile-table tbody");
 
       document.querySelectorAll("#profile-table tbody tr").forEach((row, displayIndex) => {
         const realIndex = visibleIndexes[displayIndex];

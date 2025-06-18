@@ -39,9 +39,10 @@
   <div id="user-section" class="hidden">
     <p><strong>Signed in as:</strong> <span id="user-email"></span> <button id="signOutBtn" onclick="signOut()">Sign Out</button></p>
     <div class="controls">                                                                                                                                                                                                  
-      <div style="position: relative; display: inline-block;">
-        <input type="text" id="searchBox" placeholder="Search by company, name, or email" style="width: 60%; max-width: 400px; padding-right: 30px;">
+      <div style="margin-bottom: 10px;>
+        <input type="text" id="searchBox" placeholder="Search by company, name, or email" style="width: 60%; max-width: 400px;">
         <button id="clearSearchBtn" onclick="clearSearch()">Clear</button>
+      </div>
       <button id="editBtn" onclick="startEditing()">Edit</button>
       <button id="saveBtn" class="hidden" onclick="saveChanges()">Save</button>
       <button id="cancelBtn" class="hidden" onclick="cancelChanges()">Cancel</button>

@@ -198,21 +198,46 @@
           if (el) el.addEventListener("keydown", e => { if (e.key === "Enter") saveChanges(); });
         });
       });
+
+      const newRow = document.createElement("tr");
+      HEADERS.forEach(field => {
+        let cell = document.createElement("td");
+        let input;
+        if (field === 'Sex') {
+          input = `<select><option value=""></option><option value="M">M</option><option value="F">F</option></select>`;
+        } else if (field === 'Birthdate' || field === 'Passport exp') {
+          input = `<input type="date">`;
+        } else if (field === 'Loyalty cards') {
+          input = `<textarea></textarea>`;
+        } else {
+          input = `<input type="text">`;
+        }
+        cell.innerHTML = input;
+        const el = cell.querySelector("input, select, textarea");
+        if (el) el.addEventListener("keydown", e => { if (e.key === "Enter") saveChanges(); });
+        newRow.appendChild(cell);
+      });
+      tbody.appendChild(newRow);
     }
 
     function cancelChanges() {
+      spinner.style.display = "flex";
       editing = false;
       document.getElementById("editBtn").classList.remove("hidden");
       document.getElementById("saveBtn").classList.add("hidden");
       document.getElementById("cancelBtn").classList.add("hidden");
       renderTable();
+      spinner.style.display = "none";
     }
 
     function saveChanges() {
       // const spinner = document.getElementById("spinner");
       spinner.style.display = "flex";
 
-      document.querySelectorAll("#profile-table tbody tr").forEach((row, i) => {
+      const updated = [...profileData];
+      const rows = document.querySelectorAll("#profile-table tbody tr")
+
+      rows.forEach((row, i) => {
         const rowData = [];
         row.querySelectorAll("td").forEach((cell, colIndex) => {
           const el = cell.querySelector("input, select, textarea");
@@ -222,9 +247,16 @@
           }
           rowData.push(val);
         });
-        profileData[visibleIndexes[i]] = rowData;
+
+        if (i < visibleIndexes.length) {
+          updated[visibleIndexes[i]] = rowData;
+        } else if (rowData.some(val => val.trim() !== '')) {
+          updated.push(rowData);
+        }
       });
 
+      profileData = updated;
+      
       fetch(APPS_SCRIPT_URL, {
         method: "POST",
         body: new URLSearchParams({

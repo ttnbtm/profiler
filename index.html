@@ -302,7 +302,7 @@
           if (HEADERS[colIndex-1] === 'Loyalty cards') {
             val = val.split('\n').map(s => s.trim()).filter(Boolean).join('\n');
           }
-          if (colIndex > 0 || !editing) rowData.push(val);
+          if (colIndex > 0) rowData.push(val);
         });
         console.log(i, visibleIndexes);
         if (i === 0) {
@@ -310,9 +310,6 @@
             updated.push(rowData);
           }
         } else {
-          console.log('rowData', rowData);
-          // const realIndex = visibleIndexes[i - 1];
-          // updated[realIndex] = rowData;
           updated.push(rowData);
         }
       });

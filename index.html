@@ -290,7 +290,7 @@
       // const spinner = document.getElementById("spinner");
       spinner.style.display = "flex";
 
-      const updated = [...profileData];
+      const updated = [];
       const rows = document.querySelectorAll("#profile-table tbody tr")
 
       rows.forEach((row, i) => {
@@ -311,8 +311,9 @@
           }
         } else {
           console.log('rowData', rowData);
-          const realIndex = visibleIndexes[i - 1];
-          updated[realIndex] = rowData;
+          // const realIndex = visibleIndexes[i - 1];
+          // updated[realIndex] = rowData;
+          updated.push(rowData);
         }
       });
 

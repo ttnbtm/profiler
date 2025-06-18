@@ -191,6 +191,7 @@
           let input;
           if (field === 'Sex') {
             input = `<select>
+              <option value="" ${val === '' ? 'selected' : ''}>--</option>
               <option value="M" ${val === 'M' ? 'selected' : ''}>M</option>
               <option value="F" ${val === 'F' ? 'selected' : ''}>F</option>
             </select>`;

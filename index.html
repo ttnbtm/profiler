@@ -10,7 +10,9 @@
     body { font-family: 'Roboto', sans-serif; font-size: 1em; padding: 20px; }
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 4px; text-align: left; font-size: .9em; }
-    td input { width: 100%; box-sizing: border-box; }
+    td input, td select, td textarea { width: 100%; box-sizing: border-box; }
+    td textarea { height: 4em; resize: vertical; }
+    .controls { margin-bottom: 10px; }
     .controls button { margin: 10px 0; }
     #spinner {
       display: none;
@@ -178,24 +180,8 @@
           });
         };
       });
-
-      if (editing) {
-        document.getElementById('masterCheckbox').addEventListener('change', function () {
-          document.querySelectorAll('.rowCheckbox').forEach(cb => cb.checked = this.checked);
-          updateDeleteVisibility();
-        });
-      
-        document.querySelectorAll('.rowCheckbox').forEach(cb => {
-          cb.addEventListener('change', updateDeleteVisibility);
-        });
-      }
     }
     
-    function updateDeleteVisibility() {
-      const anyChecked = [...document.querySelectorAll('.rowCheckbox')].some(cb => cb.checked);
-      document.getElementById("deleteSection").classList.toggle("hidden", !anyChecked);
-    }
-
     document.addEventListener("input", e => {
       if (e.target.id === "searchBox" && !editing) renderTable();
     });
@@ -216,14 +202,6 @@
         cbCell.innerHTML = '<input type="checkbox" class="rowCheckbox">';
         row.insertBefore(cbCell, row.firstChild);
       });
-
-      document.getElementById("masterCheckbox").addEventListener("change", function () {
-        document.querySelectorAll(".rowCheckbox").forEach(cb => cb.checked = this.checked);
-        updateDeleteVisibility();
-      });
-      document.querySelectorAll(".rowCheckbox").forEach(cb =>
-        cb.addEventListener("change", updateDeleteVisibility)
-      );
 
       const tbody = document.querySelector("#profile-table tbody");
 
@@ -253,6 +231,15 @@
         });
       });
 
+      document.getElementById('masterCheckbox').addEventListener('change', function () {
+        document.querySelectorAll('.rowCheckbox').forEach(cb => cb.checked = this.checked);
+        updateDeleteVisibility();
+      });
+    
+      document.querySelectorAll('.rowCheckbox').forEach(cb => {
+        cb.addEventListener('change', updateDeleteVisibility);
+      });
+
       const newRow = document.createElement("tr");
       HEADERS.forEach(field => {
         let cell = document.createElement("td");
@@ -274,6 +261,11 @@
       const td = document.createElement("td");
       newRow.insertBefore(td, newRow.firstChild);
       tbody.insertBefore(newRow, tbody.firstChild);
+    }
+
+    function updateDeleteVisibility() {
+      const anyChecked = [...document.querySelectorAll('.rowCheckbox')].some(cb => cb.checked);
+      document.getElementById("deleteSection").classList.toggle("hidden", !anyChecked);
     }
 
     function cancelChanges() {

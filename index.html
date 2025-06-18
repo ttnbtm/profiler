@@ -10,7 +10,7 @@
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     td input { width: 100%; box-sizing: border-box; }
-    .controls button { margin-right: 10px; }
+    .controls button { margin: 10px; }
     #spinner {
       display: none;
       position: fixed;
@@ -23,7 +23,6 @@
       font-size: 20px;
     }
     .hidden { display: none; }
-    td.copyable:hover { background-color: #eef; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -160,7 +159,14 @@
 
       document.querySelectorAll("td.copyable").forEach(cell => {
         cell.onclick = () => {
-          if (!editing) navigator.clipboard.writeText(cell.textContent);
+          if (!editing) navigator.clipboard.writeText(cell.textContent).then(() => {
+            cell.style.backgroundColor = "#dff0d8";
+            setTimeout(() => {
+              cell.style.backgroundColor = "";
+            }, 300);
+          }).catch(err => {
+            console.error("Copy failed", err);
+          });
         };
       });
     }

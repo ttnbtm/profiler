@@ -260,6 +260,7 @@
         if (i < visibleIndexes.length) {
           updated[visibleIndexes[i]] = rowData;
         } else if (rowData.some(val => val.trim() !== '')) {
+          console.log('Adding...');
           updated.push(rowData);
         }
       });

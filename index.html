@@ -26,6 +26,27 @@
       font-size: 20px;
     }
     .hidden { display: none; }
+    #toast {
+      visibility: hidden;
+      min-width: 200px;
+      background-color: #323232;
+      color: #fff;
+      text-align: center;
+      border-radius: 4px;
+      padding: 10px;
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1001;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -400,9 +421,20 @@
       let result = `P-${citizenship}-${passport}-${citizenship}-${birth}-${sex}-${passExp}-${last}-${first}`;
       if (mode === 'A') result = result.replace(/-/g, "/");
       navigator.clipboard.writeText(result).then(() => {
-        alert("Copied:\n" + result);
+        // alert("Copied:\n" + result);
+        showToast("Copied:\n" + result");
       });
     }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = "show";
+      setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+      }, 1000);
+    }
   </script>
+  <div id="toast">Copied to clipboard</div>
 </body>
 </html>

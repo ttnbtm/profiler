@@ -397,7 +397,7 @@
       const last = (row[1] || '').toUpperCase();
       const first = (row[2] || '').toUpperCase();
 
-      const result = `P-${citizenship}-${passport}-${citizenship}-${birth}-${sex}-${passExp}-${last}-${first}`;
+      let result = `P-${citizenship}-${passport}-${citizenship}-${birth}-${sex}-${passExp}-${last}-${first}`;
       if (mode === 'A') result = result.replace(/-/g, "/");
       navigator.clipboard.writeText(result).then(() => {
         alert("Copied:\n" + result);

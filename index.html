@@ -64,7 +64,7 @@
 
     const HEADERS = [
       'Company', 'Last name', 'First name', 'Last name cyr', 'First name cyr', 'Middle name cyr',
-      'Sex', 'Citizenship', 'Passport', 'Passport exp', 'Birthdate', 'ITN', 'Phone', 'Email', 'Loyalty cards'
+      'Sex', 'Birthdate', 'Citizenship', 'Passport', 'Passport exp', 'ITN', 'Phone', 'Email', 'Loyalty cards'
     ];
 
     let profileData = [];
@@ -163,7 +163,7 @@
         <tbody>
           ${filtered.map((row, i) => `
             <tr data-index="${i}" style="">
-              ${editing ? '' : `<td style="border:none;"><button onclick="copyGDS(${visibleIndexes[i]})">GDS</button></td>`}
+              ${editing ? '' : `<td style="border:none;"><button onclick="copyGDS(${visibleIndexes[i]}, 'S')">S</button>&nbsp;&nbsp;<button onclick="copyGDS(${visibleIndexes[i]}, 'A')">A</button></td>`}
               ${row.map((cell, j) => {
                 if (HEADERS[j] === 'Loyalty cards') {
                   cell = String(cell || '').split(/\r?\n/).join('<br>');
@@ -371,7 +371,7 @@
       });
     }
 
-    function copyGDS(index) {
+    function copyGDS(index, mode) {
       const row = profileData[index];
       if (!row) return;
     
@@ -396,8 +396,9 @@
       const passExp = getDDMMMYY(row[9]);
       const last = (row[1] || '').toUpperCase();
       const first = (row[2] || '').toUpperCase();
-    
+
       const result = `P-${citizenship}-${passport}-${citizenship}-${birth}-${sex}-${passExp}-${last}-${first}`;
+      if (mode === 'A') result = result.replace(/-/g, "/");
       navigator.clipboard.writeText(result).then(() => {
         alert("Copied:\n" + result);
       });

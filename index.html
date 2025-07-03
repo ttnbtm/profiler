@@ -156,7 +156,7 @@
       table.innerHTML = `
         <thead>
           <tr>
-            {editing ? '' : '<th style="border:none;"></th>'}
+            ${editing ? '' : '<th style="border:none;"></th>'}
             ${HEADERS.map(h => `<th>${h}</th>`).join('')}
           </tr>
         </thead>

@@ -156,14 +156,16 @@
       table.innerHTML = `
         <thead>
           <tr>
-            ${editing ? '' : '<th style="border:none;"></th>'}
+            <th class="${editing ? 'hidden' : ''}" style="border:none;"></th>
             ${HEADERS.map(h => `<th>${h}</th>`).join('')}
           </tr>
         </thead>
         <tbody>
           ${filtered.map((row, i) => `
             <tr data-index="${i}" style="">
-              ${editing ? '' : `<td style="border:none;"><button onclick="copyGDS(${visibleIndexes[i]})">GDS</button></td>`}
+              <td style="border:none;" class="${editing ? 'hidden' : ''}">
+                <button onclick="copyGDS(${visibleIndexes[i]})">GDS</button>
+              </td>
               ${row.map((cell, j) => {
                 if (HEADERS[j] === 'Loyalty cards') {
                   cell = String(cell || '').split(/\r?\n/).join('<br>');

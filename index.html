@@ -156,16 +156,14 @@
       table.innerHTML = `
         <thead>
           <tr>
-            <th class="${editing ? 'hidden' : ''}" style="border:none;"></th>
+            {editing ? '' : '<th style="border:none;"></th>'}
             ${HEADERS.map(h => `<th>${h}</th>`).join('')}
           </tr>
         </thead>
         <tbody>
           ${filtered.map((row, i) => `
             <tr data-index="${i}" style="">
-              <td style="border:none;" class="${editing ? 'hidden' : ''}">
-                <button onclick="copyGDS(${visibleIndexes[i]})">GDS</button>
-              </td>
+              ${editing ? '' : `<td style="border:none;"><button onclick="copyGDS(${visibleIndexes[i]})">GDS</button></td>`}
               ${row.map((cell, j) => {
                 if (HEADERS[j] === 'Loyalty cards') {
                   cell = String(cell || '').split(/\r?\n/).join('<br>');
@@ -199,6 +197,8 @@
 
     function startEditing() {
       editing = true;
+      renderTable();
+
       document.getElementById("editBtn").classList.add("hidden");
       document.getElementById("saveBtn").classList.remove("hidden");
       document.getElementById("cancelBtn").classList.remove("hidden");
@@ -267,10 +267,10 @@
         if (el) el.addEventListener("keydown", e => { if (e.key === "Enter") saveChanges(); });
         newRow.appendChild(cell);
       });
-      const gdsCell = document.createElement("td");
-      gdsCell.className = "hidden";
-      gdsCell.style.border = "none";
-      newRow.insertBefore(gdsCell, newRow.firstChild);
+      // const gdsCell = document.createElement("td");
+      // gdsCell.className = "hidden";
+      // gdsCell.style.border = "none";
+      // newRow.insertBefore(gdsCell, newRow.firstChild);
       const td = document.createElement("td");
       newRow.insertBefore(td, newRow.firstChild);
       tbody.insertBefore(newRow, tbody.firstChild);

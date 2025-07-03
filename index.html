@@ -267,6 +267,10 @@
         if (el) el.addEventListener("keydown", e => { if (e.key === "Enter") saveChanges(); });
         newRow.appendChild(cell);
       });
+      const gdsCell = document.createElement("td");
+      gdsCell.className = "hidden";
+      gdsCell.style.border = "none";
+      newRow.insertBefore(gdsCell, newRow.firstChild);
       const td = document.createElement("td");
       newRow.insertBefore(td, newRow.firstChild);
       tbody.insertBefore(newRow, tbody.firstChild);

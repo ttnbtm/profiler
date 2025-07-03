@@ -373,6 +373,7 @@
       if (!row) return;
     
       const getDDMMMYY = (str) => {
+        console.log('str', str);
         if (!str) return '';
         const date = new Date(str);
         if (isNaN(date)) return '';

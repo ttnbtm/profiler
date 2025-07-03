@@ -163,9 +163,7 @@
         <tbody>
           ${filtered.map((row, i) => `
             <tr data-index="${i}" style="">
-              <td style="border:none;">
-                ${editing ? '' : `<button onclick="copyGDS(${visibleIndexes[i]})">GDS</button>`}
-              </td>
+              ${editing ? '' : `<td style="border:none;"><button onclick="copyGDS(${visibleIndexes[i]})">GDS</button></td>`}
               ${row.map((cell, j) => {
                 if (HEADERS[j] === 'Loyalty cards') {
                   cell = String(cell || '').split(/\r?\n/).join('<br>');

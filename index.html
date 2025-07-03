@@ -389,11 +389,11 @@
         return `${day}${month}${year}`;
       };
     
-      const citizenship = (row[7] || '').toUpperCase();
-      const passport = (row[8] || '').toUpperCase();
-      const birth = getDDMMMYY(row[10]);
+      const citizenship = (row[8] || '').toUpperCase();
+      const passport = (row[9] || '').toUpperCase();
+      const birth = getDDMMMYY(row[7]);
       const sex = (row[6] || '').toUpperCase();
-      const passExp = getDDMMMYY(row[9]);
+      const passExp = getDDMMMYY(row[10]);
       const last = (row[1] || '').toUpperCase();
       const first = (row[2] || '').toUpperCase();
 

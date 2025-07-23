@@ -348,7 +348,15 @@
         if (i === 0) {
           // First row is "new record"
           if (rowData.some(val => val.trim() !== '')) {
-            newDataRows.push(rowData);
+            const passport = rowData[9]?.trim();
+            const duplicate = profileData.some(row => row[9]?.trim() === passport);
+            if (duplicate) {
+              spinner.style.display = "none";
+              showToast("Record already exists", true);
+              return;
+            } else {
+              newDataRows.push(rowData);
+            }
           }
         } else {
           const realIndex = visibleIndexes[i - 1];
@@ -426,9 +434,10 @@
       });
     }
 
-    function showToast(message) {
+    function showToast(message, isError = false) {
       const toast = document.getElementById("toast");
       toast.textContent = message;
+      toast.style.backgroundColor = isError ? "#c62828" : "#323232";
       toast.className = "show";
       setTimeout(() => {
         toast.className = toast.className.replace("show", "");

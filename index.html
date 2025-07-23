@@ -353,7 +353,7 @@
             if (duplicate) {
               spinner.style.display = "none";
               showToast("Record already exists", true);
-              return;
+              throw new Error("Duplicate record");
             } else {
               newDataRows.push(rowData);
             }
